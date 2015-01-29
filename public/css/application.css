@@ -1,0 +1,15 @@
+* {
+  color: #333;
+  font-family: helvetica, arial, sans-serif;
+}
+
+body {
+  min-width: 21em;
+  max-width: 40em;
+  margin: 0 auto;
+  padding: 1em 3em;
+}
+
+input[type=text] {
+  width: 33em;
+}
