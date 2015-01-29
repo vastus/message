@@ -6,23 +6,20 @@ var constants = require('../Constants');
 var CHANGE_EVENT = 'change';
 
 var _dispatchToken;
-var _messages = { 12: { id: 12, text: 'jabaaa' }};
+var _messages = {};
 
-function create(text) {
-  console.log('creating', text);
-
+function create(id, text) {
   var message = {
-    id: Date.now(),
+    id: id || Date.now(),
     text: text,
   };
 
   _messages[message.id] = message;
-  console.log(_messages);
 }
 
 function createAll(messages) {
   messages.forEach(function (message, _) {
-    create(message.text);
+    create(message.key, message.value);
   });
 }
 
@@ -41,7 +38,7 @@ var MessageStore = assign({}, EventEmitter.prototype, {
   },
 
   addChangeListener: function (callback) {
-    this.on(CHANGE_EVENT, callback)
+    this.on(CHANGE_EVENT, callback);
   },
 
   removeChangeListener: function (callback) {
@@ -53,7 +50,7 @@ var MessageStore = assign({}, EventEmitter.prototype, {
 _dispatchToken = Dispatcher.register(function (action) {
   switch (action.type) {
     case constants.MESSAGE_CREATE:
-      create(action.text.trim());
+      create(Date.now(), action.text.trim());
       MessageStore.emitChange();
     break;
 

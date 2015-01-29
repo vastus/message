@@ -1,40 +1,34 @@
-var React = require('react');
-var Dispatcher = require('./Dispatcher');
-var MessageStore = require('./stores/MessageStore');
-var MessageActions = require('./actions/MessageActions');
-var constants = require('./constants');
-var App = require('./views/App.react');
+var xhr = require('xhr');
+var initializer = require('./initializer');
 
-/*
- * Wrap this in a clojure and export it.
- * Pass data, and other necessary parts to it.
- */
+var API_URL = 'http://vastus.iriscouch.com/messages';
 
-var dispatchToken = Dispatcher.register(function (action) {
-  if (action.type !== constants.INITIAL_LOAD) {
-    return;
+xhr({
+  uri: API_URL + '/_design/all/_view/all_messages',
+  method: 'GET',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+}, function (err, resp, body) {
+  if (err) {
+    console.log('XHR Error.', err);
   }
 
-  var tokens = [MessageStore].map(function (store) {
-    return store.getDispatchToken();
-  });
+  switch (resp.statusCode) {
+    case 500:
+    console.log('500 Internal server error', body);
+    break;
 
-  Dispatcher.waitFor(tokens);
+    case 404:
+    console.log('404 Not found', body);
+    break;
 
-  React.render(
-    <App />,
-    document.getElementById('torso')
-  );
+    case 200:
+    var messages = JSON.parse(body).rows;
+    initializer(messages, 'torso');
+    break;
 
-  Dispatcher.unregister(dispatchToken);
+    default:
+    console.log('Do not know how to handle status code ' + statusCode);
+  }
 });
-
-var messages = [
-  {
-    id: 12,
-    text: 'holla holla!'
-  },
-];
-
-
-MessageActions.initialize(messages);
