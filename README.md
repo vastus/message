@@ -2,3 +2,8 @@
 
 Check the source. Using `Dispatcher` from Flux.
 
+## Todo
+
+  - [ ] Persistency
+  - [ ] Broadcasting (sockets? events?)
+
