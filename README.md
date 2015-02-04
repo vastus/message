@@ -4,6 +4,6 @@ Check the source. Using `Dispatcher` from Flux.
 
 ## Todo
 
-  - [ ] Persistency
+  - [x] Persistency
   - [ ] Broadcasting (sockets? events?)
 
