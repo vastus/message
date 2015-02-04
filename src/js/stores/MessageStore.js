@@ -2,24 +2,33 @@ var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 var Dispatcher = require('../Dispatcher');
 var constants = require('../Constants');
+var Rest = require('../utils/Rest');
 
 var CHANGE_EVENT = 'change';
 
 var _dispatchToken;
 var _messages = {};
 
-function create(id, text) {
-  var message = {
-    id: id || Date.now(),
+function message(id, text) {
+  return {
+    id: id || Date.now().toString(),
     text: text,
   };
-
-  _messages[message.id] = message;
 }
 
-function createAll(messages) {
-  messages.forEach(function (message, _) {
-    create(message.key, message.value);
+function create(id, text) {
+  var m = message(id, text);
+  _messages[id] = m;
+  Rest.create(id, text).then(function success(resp) {
+    console.log('Created', resp);
+  }, function fail(err) {
+    console.log('Failed', err);
+  });
+}
+
+function addToCollection(messages) {
+  messages.forEach(function (m, _) {
+    _messages[m.id] = message(m.id, m.value);
   });
 }
 
@@ -55,7 +64,7 @@ _dispatchToken = Dispatcher.register(function (action) {
     break;
 
     case constants.INITIAL_LOAD:
-      createAll(action.messages);
+      addToCollection(action.messages);
       MessageStore.emitChange();
     break;
   }
