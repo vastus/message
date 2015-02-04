@@ -1,10 +1,9 @@
 var xhr = require('xhr');
+var constants = require('./constants');
 var initializer = require('./initializer');
 
-var API_URL = 'http://vastus.iriscouch.com/messages';
-
 xhr({
-  uri: API_URL + '/_design/all/_view/all_messages',
+  uri: constants.API_URL + '/_design/all/_view/all_messages',
   method: 'GET',
   headers: {
     'Content-Type': 'application/json',
